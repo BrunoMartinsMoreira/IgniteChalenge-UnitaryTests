@@ -60,6 +60,14 @@ describe('Get the balance', () => {
       description: 'Withdrawing $30',
     });
 
+    await createStatementUseCase.execute({
+      user_id: user02.id as string,
+      sender_id: user01.id as string,
+      type: OperationType.TRANSFER,
+      amount: 50,
+      description: 'Transfer $50 to User 02',
+    });
+
     /* --- Statements User 02 --- */
     await createStatementUseCase.execute({
       user_id: user02.id as string,
@@ -68,9 +76,19 @@ describe('Get the balance', () => {
       description: 'Depositing $100',
     });
 
+    await createStatementUseCase.execute({
+      user_id: user01.id as string,
+      sender_id: user02.id as string,
+      type: OperationType.TRANSFER,
+      amount: 100,
+      description: 'Transfer $100 to User 01',
+    });
+
     const result = await getBalanceUseCase.execute({
       user_id: user01.id as string,
     });
+
+    // console.log(result);
 
     expect(result).toHaveProperty('balance');
     expect(result.balance).toBeGreaterThan(0);
